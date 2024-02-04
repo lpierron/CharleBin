@@ -6,7 +6,6 @@ doc/*
 vendor
 log
 .phpunit.result.cache
-composer.lock
 
 # CakePHP 3
 
