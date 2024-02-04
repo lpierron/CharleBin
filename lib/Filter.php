@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PrivateBin
  *
@@ -28,10 +29,34 @@ class Filter
      *
      * @access public
      * @static
-     * @param  string $time
+     * @param int $time
+     * @param string $unit
      * @throws Exception
      * @return string
      */
+    public static function formatHumanReadableTime($time, $unit = 'second')
+    {
+        $labels = [
+            'second' => 'seconds',
+            'minute' => 'minutes',
+            'hour' => 'hours',
+            'day' => 'days',
+            'week' => 'weeks',
+            'month' => 'months',
+            'year' => 'years',
+        ];
+
+        if (!is_int($time)) {
+            throw new Exception('Time must be an integer.');
+        }
+
+        if (!array_key_exists($unit, $labels)) {
+            throw new Exception('Invalid time unit.');
+        }
+
+        return $time . ' ' . ($time == 1 ? substr($labels[$unit], 0, -1) : $labels[$unit]);
+    }
+    /* 
     public static function formatHumanReadableTime($time)
     {
         if (preg_match('/^(\d+) *(\w+)$/', $time, $matches) !== 1) {
@@ -48,7 +73,7 @@ class Filter
                 $unit = rtrim($matches[2], 's');
         }
         return I18n::_(array('%d ' . $unit, '%d ' . $unit . 's'), (int) $matches[1]);
-    }
+    } */
 
     /**
      * format a given number of bytes in IEC 80000-13:2008 notation (localized)
