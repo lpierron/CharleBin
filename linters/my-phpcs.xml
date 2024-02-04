@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="pcsg-generated-ruleset">
+<description>Created with the PHP Coding Standard Generator. http://edorian.github.com/php-coding-standard-generator/
+</description>
+<rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop"/>
+<rule ref="Generic.Metrics.CyclomaticComplexity"/>
+<rule ref="Generic.Metrics.NestingLevel"/>
+</ruleset>
