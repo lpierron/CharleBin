@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# If any command fails, exit immediately with that command's exit status
+set -eo pipefail
+
+function join_by {
+	local d=${1-} f=${2-}
+	if shift 2; then
+		printf %s "$f" "${@/#/$d}"
+fi
+}
+
+# Find all changed files for this commit
+# Compute the diff only once to save a small amount of time.
+CHANGED_FILES=$(git diff --name-only --cached --diff-filter=ACMR)
+
+if [[ -n "$CHANGED_FILES" ]]
+then
+	# Run php-cs-fixer against changed PHP files for this commit
+    ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix -v $CHANGED_FILES  
+	echo "php-cs-fixer passes all altered PHP sources."
+	# Run Mess Detector against changed PHP files for this commit
+	./vendor/bin/phpmd $(join_by , $CHANGED_FILES) ansi codesize,unusedcode,naming
+	echo "mess detector passed!"
+	
+	git add $CHANGED_FILES
+	echo "End of pre-commit"
+fi
