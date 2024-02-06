@@ -17,7 +17,7 @@ CHANGED_FILES=$(git diff --name-only --cached --diff-filter=ACMR)
 if [[ -n "$CHANGED_FILES" ]]
 then
 	# Run php-cs-fixer against changed PHP files for this commit
-    ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix -v $CHANGED_FILES  
+       ./vendor/friendsofphp/php-cs-fixer/php-cs-fixer fix --config=".php_cs.dist.php"  -v --  $CHANGED_FILES  
 	echo "php-cs-fixer passes all altered PHP sources."
 	# Run Mess Detector against changed PHP files for this commit
 	./vendor/bin/phpmd $(join_by , $CHANGED_FILES) ansi codesize,unusedcode,naming
