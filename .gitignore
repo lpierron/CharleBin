@@ -6,6 +6,7 @@ doc/*
 vendor
 log
 .phpunit.result.cache
+.php-cs-fixer.cache
 
 # CakePHP 3
 
