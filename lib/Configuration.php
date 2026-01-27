@@ -37,7 +37,7 @@ class Configuration
      */
     private static $_defaults = array(
         'main' => array(
-            'name'                     => 'CharleMagne',
+            'name'                     => 'CharlyMagnet',
             'basepath'                 => '',
             'discussion'               => true,
             'opendiscussion'           => false,
