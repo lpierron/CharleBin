@@ -51,12 +51,18 @@ class Database extends AbstractData
     private $_type = '';
 
     /**
-     * instantiates a new Database data backend
+     * Initialize the Database backend: establish a PDO connection, create missing tables,
+     * and upgrade schema to the current application version.
      *
-     * @access public
-     * @param  array $options
-     * @throws Exception
-     * @return
+     * The $options array must include 'dsn', 'usr', 'pwd', and 'opt'. The optional 'tbl'
+     * key sets a table name prefix. The method will detect the database driver from the
+     * DSN, configure PDO options, ensure paste, comment, and config tables exist, and
+     * perform incremental schema upgrades when the stored DB version is older than the
+     * application's Controller::VERSION.
+     *
+     * @param array $options Configuration options. Required keys: 'dsn' (PDO DSN), 'usr' (username),
+     *                       'pwd' (password), 'opt' (PDO options array). Optional key: 'tbl' (table prefix).
+     * @throws Exception If one or more required configuration keys ('dsn', 'usr', 'pwd', 'opt') are missing.
      */
     public function __construct(array $options)
     {
@@ -199,11 +205,18 @@ class Database extends AbstractData
     }
 
     /**
-     * Read a paste.
+     * Retrieve a paste by its ID and return its data and metadata.
      *
-     * @access public
-     * @param  string $pasteid
-     * @return array|false
+     * Decodes stored payloads for both v1 and v2 paste formats, upgrades legacy
+     * pre-v1 metadata, and populates version-specific fields such as the created
+     * timestamp and expire_date. For v1 pastes this also includes legacy
+     * attachment, attachmentname, opendiscussion, and burnafterreading flags.
+     *
+     * @param string $pasteid The paste identifier to look up.
+     * @return array|false Array containing paste fields (for v2 the decoded payload;
+     *                     for v1 a 'data' element), a 'meta' subarray, and optional
+     *                     attachment fields; `false` if the paste was not found or
+     *                     on error.
      */
     public function read($pasteid)
     {
@@ -265,11 +278,10 @@ class Database extends AbstractData
     }
 
     /**
-     * Delete a paste and its discussion.
-     *
-     * @access public
-     * @param  string $pasteid
-     */
+         * Remove a paste and all associated comments from the database.
+         *
+         * @param string $pasteid The identifier of the paste to delete.
+         */
     public function delete($pasteid)
     {
         $this->_exec(
@@ -285,11 +297,10 @@ class Database extends AbstractData
     }
 
     /**
-     * Test if a paste exists.
+     * Determine whether a paste with the given ID exists.
      *
-     * @access public
-     * @param  string $pasteid
-     * @return bool
+     * @param string $pasteid The paste identifier to check.
+     * @return bool `true` if a paste with the specified ID exists, `false` otherwise.
      */
     public function exists($pasteid)
     {
@@ -353,12 +364,16 @@ class Database extends AbstractData
     }
 
     /**
-     * Read all comments of paste.
-     *
-     * @access public
-     * @param  string $pasteid
-     * @return array
-     */
+         * Retrieve all comments for a given paste.
+         *
+         * Returns an array of comments indexed by insertion order. Each comment entry
+         * contains 'id' (comment id), 'parentid' (parent comment id), 'meta' (associative
+         * metadata including created timestamp and nickname/icon keys), and either a
+         * decoded v2 structure or a 'data' string for v1 comments.
+         *
+         * @param string $pasteid The paste identifier to fetch comments for.
+         * @return array An array of comment entries keyed by insertion index.
+         */
     public function readComments($pasteid)
     {
         $rows = $this->_select(
@@ -396,13 +411,12 @@ class Database extends AbstractData
     }
 
     /**
-     * Test if a comment exists.
+     * Determine whether a comment with the specified identifiers exists.
      *
-     * @access public
-     * @param  string $pasteid
-     * @param  string $parentid
-     * @param  string $commentid
-     * @return bool
+     * @param string $pasteid ID of the paste.
+     * @param string $parentid ID of the parent comment.
+     * @param string $commentid ID of the comment to check.
+     * @return bool `true` if the comment exists, `false` otherwise.
      */
     public function existsComment($pasteid, $parentid, $commentid)
     {
@@ -593,12 +607,13 @@ class Database extends AbstractData
     }
 
     /**
-     * get table list query, depending on the database type
+     * Provide the SQL query to list existing table names for the given PDO driver.
      *
-     * @access private
-     * @param  string $type
-     * @throws Exception
-     * @return string
+     * Supported driver values: "ibm", "informix", "mssql", "mysql", "oci", "pgsql", "sqlite".
+     *
+     * @param string $type PDO driver type identifier.
+     * @throws Exception If the given PDO type is not supported.
+     * @return string SQL query that returns table names for the specified driver.
      */
     private function _getTableQuery($type)
     {
@@ -649,12 +664,11 @@ class Database extends AbstractData
     }
 
     /**
-     * get a value by key from the config table
-     *
-     * @access private
-     * @param  string $key
-     * @return string
-     */
+         * Retrieve a configuration value by key from the config table.
+         *
+         * @param string $key The configuration key (id) to look up.
+         * @return string The stored configuration value, or an empty string if the key is not present or on error.
+         */
     private function _getConfig($key)
     {
         try {
@@ -776,10 +790,13 @@ class Database extends AbstractData
     }
 
     /**
-     * create the paste table
-     *
-     * @access private
-     */
+         * Create the comment table and ensure an index on its pasteid column.
+         *
+         * Creates the database table used to store comments (columns: dataid, pasteid,
+         * parentid, data, nickname, vizhash, postdate) and adds an index on pasteid.
+         * Index creation uses an Oracle-compatible PL/SQL block when the driver is OCI,
+         * and a standard CREATE INDEX for other drivers.
+         */
     private function _createCommentTable()
     {
         list($main_key, $after_key) = $this->_getPrimaryKeyClauses();

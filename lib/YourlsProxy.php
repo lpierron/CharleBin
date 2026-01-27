@@ -40,12 +40,14 @@ class YourlsProxy
     private $_url = '';
 
     /**
-     * constructor
+     * Request a YOURLS short URL for the provided link and store the result on the instance.
      *
-     * initializes and runs PrivateBin
+     * Sends a POST to the configured YOURLS API; on success the resulting short URL is stored
+     * in the instance's internal URL property, on failure an explanatory message is stored
+     * in the instance's internal error property.
      *
-     * @access public
-     * @param string $link
+     * @param Configuration $conf Configuration object (must provide 'basepath', 'apiurl', and 'signature' keys).
+     * @param string $link The original URL to shorten; must point to this instance's basepath (basepath followed by '?').
      */
     public function __construct(Configuration $conf, $link)
     {

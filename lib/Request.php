@@ -215,11 +215,13 @@ class Request
             'localhost';
     }
 
-    /**
-     * Get request URI
+    / **
+     * Return the request URI path.
      *
-     * @access public
-     * @return string
+     * If the server provides REQUEST_URI, returns its path component (query string removed)
+     * with HTML special characters escaped; otherwise returns '/'.
+     *
+     * @return string The escaped request path or '/' when unavailable.
      */
     public function getRequestUri()
     {
@@ -251,12 +253,11 @@ class Request
     }
 
     /**
-     * Detect the clients supported media type and decide if its a JSON API call or not
+     * Determine whether the request expects a JSON API response.
      *
-     * Adapted from: https://stackoverflow.com/questions/3770513/detect-browser-language-in-php#3771447
+     * Checks request headers (Accept and X-Requested-With) and performs media type negotiation to decide if JSON is preferred over HTML/XHTML.
      *
-     * @access private
-     * @return bool
+     * @return bool `true` if the client prefers or requests JSON, `false` otherwise.
      */
     private function _detectJsonRequest()
     {

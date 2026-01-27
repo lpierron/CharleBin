@@ -204,12 +204,16 @@ class Filesystem extends AbstractData
     }
 
     /**
-     * Read all comments of paste.
-     *
-     * @access public
-     * @param  string $pasteid
-     * @return array
-     */
+         * Retrieve all comments for a paste.
+         *
+         * Comments are returned as an array keyed by chronological slot (oldest first).
+         * Each comment array is decoded from storage and augmented with `id` and `parentid`
+         * fields; timestamp information is present in the `meta` subarray (v2 uses `created`,
+         * v1 uses `postdate`).
+         *
+         * @param string $pasteid The paste identifier.
+         * @return array Array of comment arrays keyed by chronological slot (oldest first).
+         */
     public function readComments($pasteid)
     {
         $comments = array();

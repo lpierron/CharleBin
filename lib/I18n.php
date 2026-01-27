@@ -152,12 +152,13 @@ class I18n
     }
 
     /**
-     * loads translations
+     * Load and set translations for the current user language.
      *
-     * From: https://stackoverflow.com/questions/3770513/detect-browser-language-in-php#3771447
-     *
-     * @access public
-     * @static
+     * Selects a language from the 'lang' cookie when present and supported, otherwise
+     * matches the browser's preferred languages against available translations.
+     * Sets self::$_language to the selected code and self::$_translations to an
+     * empty array for 'en' or to the decoded JSON translation file for the
+     * selected language.
      */
     public static function loadTranslations()
     {
@@ -206,13 +207,14 @@ class I18n
     }
 
     /**
-     * detect the clients supported languages and return them ordered by preference
+     * Parse the client's Accept-Language header into language tags grouped by preference.
      *
-     * From: https://stackoverflow.com/questions/3770513/detect-browser-language-in-php#3771447
+     * Parses $_SERVER['HTTP_ACCEPT_LANGUAGE'] and returns an associative array where keys
+     * are quality values (as strings) and values are arrays of language tags (lowercased).
+     * The array is ordered by descending quality; if the header is missing an empty array
+     * is returned.
      *
-     * @access public
-     * @static
-     * @return array
+     * @return array<string, string[]> Associative array keyed by quality (e.g. "1.0") to arrays of language tags in lowercase, ordered by descending quality.
      */
     public static function getBrowserLanguages()
     {
@@ -306,15 +308,11 @@ class I18n
     }
 
     /**
-     * determines the plural form to use based on current language and given number
-     *
-     * From: https://docs.translatehouse.org/projects/localization-guide/en/latest/l10n/pluralforms.html
-     *
-     * @access protected
-     * @static
-     * @param  int $n
-     * @return int
-     */
+         * Determine the plural form index for the current language given a number.
+         *
+         * @param int $n The number used to select the plural form.
+         * @return int The index of the plural form to use for the current language.
+         */
     protected static function _getPluralForm($n)
     {
         switch (self::$_language) {
