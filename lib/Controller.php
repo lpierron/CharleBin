@@ -155,10 +155,11 @@ class Controller
     }
 
     /**
-     * initialize PrivateBin
+     * Initialize core configuration, model, and request context and determine the base URL.
      *
-     * @access private
-     * @throws Exception
+     * Creates and stores Configuration, Model, and Request instances, sets the controller's
+     * base URL from the current request, configures the default language fallback, and, when
+     * language selection is disabled, forces the default language via the lang cookie.
      */
     private function _init()
     {
@@ -329,7 +330,9 @@ class Controller
     }
 
     /**
-     * Display frontend.
+     * Render the frontend: send non-caching and security HTTP headers, prepare template variables, and output the configured view.
+     *
+     * Prepares expiration and formatter options, handles language cookie if enabled, and assigns all necessary template variables before rendering.
      *
      * @access private
      */

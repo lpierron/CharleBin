@@ -101,9 +101,13 @@ class Configuration
     );
 
     /**
-     * parse configuration file and ensure default configuration values are present
+     * Load and prepare the application configuration from file and defaults.
      *
-     * @throws Exception
+     * Reads conf.php from CONFIG_PATH or PATH/cfg, parses its sections, merges values with built-in defaults,
+     * applies backend-specific defaults for model options, normalizes legacy model class names, validates the
+     * default expire key, and ensures main.basepath has a trailing slash when set.
+     *
+     * @throws Exception If a required configuration section ('main', 'model', or 'model_options') is missing in the configuration file.
      */
     public function __construct()
     {
