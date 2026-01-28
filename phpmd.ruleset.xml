@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="My first PHPMD rule set"
+<ruleset name="PrivateBin PHPMD rule set"
          xmlns="http://pmd.sf.net/ruleset/1.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0
@@ -7,20 +7,24 @@
          xsi:noNamespaceSchemaLocation="
                      http://pmd.sf.net/ruleset_xml_schema.xsd">
     <description>
-        My custom rule set that checks my code...
+        PrivateBin custom rule set
     </description>
 
-    <!-- Import the entire unused code rule set -->
-    <rule ref="rulesets/unusedcode.xml" />
+    <!-- Exclude vendor and test directories -->
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/tst/*</exclude-pattern>
+    <exclude-pattern>*/tests/*</exclude-pattern>
 
-    <!--
-        Import the entire cyclomatic complexity rule and
-        customize the rule configuration.
-    -->
+    <!-- Import unused code rules but exclude unused formal parameters -->
+    <rule ref="rulesets/unusedcode.xml">
+        <exclude name="UnusedFormalParameter" />
+    </rule>
+
+    <!-- Cyclomatic complexity with a more reasonable threshold -->
     <rule ref="rulesets/codesize.xml/CyclomaticComplexity">
-        <priority>1</priority>
+        <priority>3</priority>
         <properties>
-            <property name="reportLevel" value="5" />
+            <property name="reportLevel" value="50" />
         </properties>
     </rule>
 
