@@ -7,6 +7,11 @@ describe('CharleBin Comprehensive Tests', () => {
     cy.get('#message', { timeout: 10000 }).should('be.visible');
   });
 
+  // Wait 10 seconds between tests to avoid rate limiting
+  afterEach(() => {
+    cy.wait(10500);
+  });
+
   it('should create a paste without password', () => {
     cy.get('#message').type('Test paste without password');
     cy.get('#sendbutton').click();
