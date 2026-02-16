@@ -1,0 +1,8 @@
+{
+  "name": "charlebin",
+  "version": "1.0.0",
+  "description": "CharleBin - Zero-knowledge paste bin",
+  "devDependencies": {
+    "cypress": "^13.0.0"
+  }
+}
