@@ -24,6 +24,8 @@ describe('CharleBin Comprehensive Tests', () => {
     cy.get('#passwordinput').type('testpassword');
     cy.get('#sendbutton').click();
     
+    // Click the paste URL to open the paste (required to show password dialog)
+    cy.get('#pasteurl').click();
     // Wait for the password decrypt form to appear
     cy.get('#passworddecrypt', { timeout: 10000 }).should('be.visible');
     cy.get('#passworddecrypt').type('testpassword');
@@ -34,6 +36,7 @@ describe('CharleBin Comprehensive Tests', () => {
   it('should burn after reading - paste is deleted after viewing', () => {
     cy.get('#message').type('Burn after reading test');
     cy.get('#burnafterreading').check();
+    cy.get('#passwordinput').type('testpassword');
     cy.get('#sendbutton').click();
     cy.get('#pasteurl', { timeout: 10000 }).should('be.visible');
     
