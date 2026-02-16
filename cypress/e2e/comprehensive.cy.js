@@ -28,8 +28,8 @@ describe('CharleBin Comprehensive Tests', () => {
     cy.get('#pasteurl').click();
     // Wait for the password decrypt form to appear
     cy.get('#passworddecrypt', { timeout: 10000 }).should('be.visible');
-    cy.get('#passworddecrypt').type('testpassword');
-    cy.get('#passwordform > .btn').click();
+    cy.wait(1000);
+    cy.get('#passworddecrypt').type('testpassword{enter}', { delay: 50 });
     cy.get('#prettyprint').should('contain', 'Password protected paste');
   });
 
